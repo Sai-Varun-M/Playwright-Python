@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playwright Test Dashboard</title>
+  <meta name="description" content="Interactive test reporting dashboard for the Playwright Python automation framework." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎭</span>
+        <div>
+          <h1 class="logo-title">Playwright Dashboard</h1>
+          <p class="logo-sub">Python · pytest · Automated Testing</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="badge badge-live">● LIVE</span>
+        <span id="generated-at" class="meta-text">—</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── KPI Cards ───────────────────────────────────────────────── -->
+    <section class="kpi-grid" aria-label="Test summary statistics">
+      <div class="kpi-card kpi-total" id="kpi-total">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-value" id="total-count">—</div>
+        <div class="kpi-label">Total Tests</div>
+      </div>
+      <div class="kpi-card kpi-passed" id="kpi-passed">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-value" id="passed-count">—</div>
+        <div class="kpi-label">Passed</div>
+      </div>
+      <div class="kpi-card kpi-failed" id="kpi-failed">
+        <div class="kpi-icon">❌</div>
+        <div class="kpi-value" id="failed-count">—</div>
+        <div class="kpi-label">Failed</div>
+      </div>
+      <div class="kpi-card kpi-skipped" id="kpi-skipped">
+        <div class="kpi-icon">⏭️</div>
+        <div class="kpi-value" id="skipped-count">—</div>
+        <div class="kpi-label">Skipped</div>
+      </div>
+      <div class="kpi-card kpi-rate" id="kpi-rate">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-value" id="pass-rate">—</div>
+        <div class="kpi-label">Pass Rate</div>
+      </div>
+      <div class="kpi-card kpi-duration" id="kpi-duration">
+        <div class="kpi-icon">⏱️</div>
+        <div class="kpi-value" id="avg-duration">—</div>
+        <div class="kpi-label">Avg Duration</div>
+      </div>
+    </section>
+
+    <!-- ── Charts Row ──────────────────────────────────────────────── -->
+    <section class="charts-row" aria-label="Test result charts">
+      <div class="chart-card">
+        <h2 class="chart-title">Overall Results</h2>
+        <div class="chart-wrap donut-wrap">
+          <canvas id="donut-chart" aria-label="Pass/Fail donut chart"></canvas>
+          <div class="donut-center" id="donut-center-label">—</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h2 class="chart-title">Results by Suite</h2>
+        <div class="chart-wrap">
+          <canvas id="suite-chart" aria-label="Results per test suite bar chart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h2 class="chart-title">Results by Browser</h2>
+        <div class="chart-wrap">
+          <canvas id="browser-chart" aria-label="Results per browser bar chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Duration histogram ──────────────────────────────────────── -->
+    <section class="chart-card chart-card-wide" aria-label="Test duration chart">
+      <h2 class="chart-title">Test Duration (ms) — Top 20 Slowest</h2>
+      <div class="chart-wrap chart-wrap-tall">
+        <canvas id="duration-chart" aria-label="Test duration bar chart"></canvas>
+      </div>
+    </section>
+
+    <!-- ── Test Results Table ──────────────────────────────────────── -->
+    <section class="table-section" aria-label="Detailed test results">
+      <div class="table-header">
+        <h2 class="chart-title" style="margin:0">Test Results</h2>
+        <div class="filters">
+          <select id="filter-status" class="filter-select" aria-label="Filter by status">
+            <option value="all">All Statuses</option>
+            <option value="passed">✅ Passed</option>
+            <option value="failed">❌ Failed</option>
+            <option value="skipped">⏭️ Skipped</option>
+          </select>
+          <select id="filter-suite" class="filter-select" aria-label="Filter by suite">
+            <option value="all">All Suites</option>
+          </select>
+          <select id="filter-browser" class="filter-select" aria-label="Filter by browser">
+            <option value="all">All Browsers</option>
+          </select>
+          <input id="search-input" type="search" class="search-input"
+                 placeholder="Search tests…" aria-label="Search tests" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="results-table" class="results-table">
+          <thead>
+            <tr>
+              <th data-col="status">Status</th>
+              <th data-col="name">Test Name</th>
+              <th data-col="suite">Suite</th>
+              <th data-col="browser">Browser</th>
+              <th data-col="duration">Duration</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span id="row-count" class="meta-text">0 tests</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Error modal for failed test details ──────────────────────── -->
+  <div id="error-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Failure Details</h3>
+        <button id="modal-close" class="modal-close" aria-label="Close">✕</button>
+      </div>
+      <pre id="modal-body" class="modal-body"></pre>
+    </div>
+  </div>
+
+  <!-- Load data injected by generate_report.py -->
+  <script src="data.js" onerror="window.REPORT_DATA=null"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
