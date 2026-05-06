@@ -2,6 +2,7 @@
 Login E2E Tests — full authentication flows.
 Run with:  pytest tests/e2e/test_login.py -m login
 """
+import re
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -46,7 +47,7 @@ class TestLoginFlow:
         login_page.login_as_valid_user()
         login_page.assert_login_success()
         login_page.logout()
-        expect(login_page.page).to_have_url(lambda url: "/login" in url)
+        expect(login_page.page).to_have_url(re.compile(r"/login"))
 
     def test_login_button_enabled(self, login_page: LoginPage) -> None:
         """Login button should be enabled on the login page."""

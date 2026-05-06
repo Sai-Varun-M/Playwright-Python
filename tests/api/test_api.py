@@ -3,6 +3,7 @@ API Tests — REST API validation using Playwright's APIRequestContext.
 Target:    https://jsonplaceholder.typicode.com
 Run with:  pytest tests/api/ -m api
 """
+import json
 import pytest
 from playwright.sync_api import APIRequestContext
 
@@ -76,7 +77,8 @@ class TestPostRequests:
 
     def test_create_post(self, api_request: APIRequestContext) -> None:
         """POST /posts should return 201 and echo the created resource."""
-        response = api_request.post("/posts", data=SAMPLE_POST)
+        response = api_request.post("/posts", data=json.dumps(SAMPLE_POST),
+                                    headers={"Content-Type": "application/json"})
         assert response.status == 201
         created = response.json()
         assert created["title"] == SAMPLE_POST["title"]
@@ -85,7 +87,8 @@ class TestPostRequests:
 
     def test_create_todo(self, api_request: APIRequestContext) -> None:
         """POST /todos should create a new todo."""
-        response = api_request.post("/todos", data=SAMPLE_TODO)
+        response = api_request.post("/todos", data=json.dumps(SAMPLE_TODO),
+                                    headers={"Content-Type": "application/json"})
         assert response.status == 201
         todo = response.json()
         assert todo["title"] == SAMPLE_TODO["title"]
@@ -99,7 +102,8 @@ class TestPutRequests:
     def test_update_post(self, api_request: APIRequestContext) -> None:
         """PUT /posts/1 should update and return the modified resource."""
         updated = {**SAMPLE_POST, "id": 1, "title": "Updated Title"}
-        response = api_request.put("/posts/1", data=updated)
+        response = api_request.put("/posts/1", data=json.dumps(updated),
+                                   headers={"Content-Type": "application/json"})
         assert_response_ok(response.status)
         result = response.json()
         assert result["title"] == "Updated Title"

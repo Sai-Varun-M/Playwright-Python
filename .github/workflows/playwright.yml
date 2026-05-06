@@ -55,6 +55,9 @@ jobs:
           pytest tests/smoke/ \
             -m smoke \
             --browser chromium \
+            --screenshot=only-on-failure \
+            --video=retain-on-failure \
+            --tracing=retain-on-failure \
             --html=playwright-report/smoke-report.html \
             --self-contained-html \
             --json-report \
@@ -75,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: smoke
     timeout-minutes: 30
-    if: ${{ github.event.inputs.suite != 'smoke' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.suite != 'smoke' }}
 
     strategy:
       fail-fast: false
@@ -103,6 +106,9 @@ jobs:
           pytest tests/e2e/ \
             -m e2e \
             --browser ${{ matrix.browser }} \
+            --screenshot=only-on-failure \
+            --video=retain-on-failure \
+            --tracing=retain-on-failure \
             --html=playwright-report/e2e-${{ matrix.browser }}-report.html \
             --self-contained-html \
             --json-report \
@@ -123,7 +129,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: smoke
     timeout-minutes: 15
-    if: ${{ github.event.inputs.suite != 'smoke' }}
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.suite != 'smoke' }}
 
     steps:
       - name: Checkout

@@ -2,6 +2,7 @@
 Navigation E2E Tests — link traversal and URL assertions.
 Run with:  pytest tests/e2e/test_navigation.py -m navigation
 """
+import re
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -22,22 +23,22 @@ class TestNavigation:
     def test_navigate_to_checkboxes(self, home_page: HomePage) -> None:
         """Clicking the Checkboxes link should open the checkboxes page."""
         home_page.click_link("Checkboxes")
-        expect(home_page.page).to_have_url(lambda url: "checkboxes" in url)
+        expect(home_page.page).to_have_url(re.compile(r"checkboxes"))
 
     def test_navigate_to_inputs(self, home_page: HomePage) -> None:
         """Clicking the Inputs link should open the inputs page."""
         home_page.click_link("Inputs")
-        expect(home_page.page).to_have_url(lambda url: "inputs" in url)
+        expect(home_page.page).to_have_url(re.compile(r"inputs"))
 
     def test_navigate_to_dropdown(self, home_page: HomePage) -> None:
         """Clicking the Dropdown link should open the dropdown page."""
         home_page.click_link("Dropdown")
-        expect(home_page.page).to_have_url(lambda url: "dropdown" in url)
+        expect(home_page.page).to_have_url(re.compile(r"dropdown"))
 
     def test_navigate_to_login(self, home_page: HomePage) -> None:
         """Clicking Form Authentication should reach the login page."""
         home_page.click_link("Form Authentication")
-        expect(home_page.page).to_have_url(lambda url: "/login" in url)
+        expect(home_page.page).to_have_url(re.compile(r"/login"))
 
     def test_browser_back_navigation(self, home_page: HomePage) -> None:
         """Browser back button should return to home from a sub-page."""
@@ -52,7 +53,7 @@ class TestNavigation:
         home_page.page.go_back()
         home_page.page.go_forward()
         home_page.wait_for_load()
-        expect(home_page.page).to_have_url(lambda url: "inputs" in url)
+        expect(home_page.page).to_have_url(re.compile(r"inputs"))
 
     def test_direct_url_navigation(self, page: Page) -> None:
         """Navigating directly to a sub-page URL should work."""

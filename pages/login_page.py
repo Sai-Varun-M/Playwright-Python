@@ -1,6 +1,8 @@
 """Login Page Object — https://the-internet.herokuapp.com/login"""
 from __future__ import annotations
 
+import re
+
 from playwright.sync_api import Page, Locator, expect
 
 from pages.base_page import BasePage
@@ -55,11 +57,11 @@ class LoginPage(BasePage):
     # ── Assertions ────────────────────────────────────────────────────
 
     def assert_on_login_page(self) -> None:
-        expect(self.page).to_have_url(lambda url: "/login" in url)
+        expect(self.page).to_have_url(re.compile(r"/login"))
         self.assert_visible(self.login_button)
 
     def assert_login_success(self) -> None:
-        expect(self.page).to_have_url(lambda url: "/secure" in url)
+        expect(self.page).to_have_url(re.compile(r"/secure"))
         self.assert_contains_text(self.flash_message, "You logged into a secure area")
 
     def assert_login_failure(self) -> None:
