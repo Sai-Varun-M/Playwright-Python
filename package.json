@@ -1,0 +1,25 @@
+{
+  "name": "playwright-python",
+  "version": "1.0.0",
+  "description": "> Production-grade end-to-end test automation framework using **Python + Playwright + pytest** with a CI/CD pipeline and an interactive reporting dashboard.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sai-Varun-M/Playwright-Python.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sai-Varun-M/Playwright-Python/issues"
+  },
+  "homepage": "https://github.com/Sai-Varun-M/Playwright-Python#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0"
+  }
+}
